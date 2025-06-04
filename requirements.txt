@@ -11,3 +11,4 @@ stripe
 pytest
 pytest-django
 pytest-cov
+gunicorn
