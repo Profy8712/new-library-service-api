@@ -26,7 +26,16 @@ Library Service API is a Django-based microservice project designed for city lib
 
 ### Setup
 
-```bash
 cp .env.sample .env
 # (Set your own secrets)
 docker-compose up --build
+The API will be available at http://localhost:8000.
+
+Running Tests
+bash
+Copy code
+docker-compose run web pytest --cov
+Documentation
+
+Swagger: /swagger/
+Redoc: /redoc/
