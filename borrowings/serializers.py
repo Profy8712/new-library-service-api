@@ -18,3 +18,17 @@ class BorrowingReadSerializer(serializers.ModelSerializer):
             "expected_return_date",
             "actual_return_date",
         )
+
+
+class BorrowingCreateSerializer(serializers.ModelSerializer):
+    """Serializer for creating Borrowing objects."""
+
+    class Meta:
+        model = Borrowing
+        fields = ("book", "expected_return_date")
+
+    def validate(self, attrs):
+        book = attrs.get("book")
+        if book.inventory < 1:
+            raise serializers.ValidationError("Book is out of stock.")
+        return attrs
