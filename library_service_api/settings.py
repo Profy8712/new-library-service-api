@@ -44,8 +44,7 @@ INSTALLED_APPS = [
     "borrowings",
     "notifications",
     "django_celery_results",
-
-
+     "payments",
 
 ]
 
