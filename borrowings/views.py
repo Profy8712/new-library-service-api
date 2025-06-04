@@ -1,12 +1,16 @@
+from rest_framework import viewsets, permissions, serializers, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import status
+from django_filters.rest_framework import DjangoFilterBackend
 
-from books import permissions
-from borrowings import serializers
-from borrowings.filters import BorrowingFilter
 from borrowings.models import Borrowing
-from borrowings.serializers import BorrowingCreateSerializer, BorrowingReadSerializer
+from borrowings.serializers import (
+    BorrowingReadSerializer,
+    BorrowingCreateSerializer
+)
+from borrowings.filters import BorrowingFilter
+
+from notifications.tasks import send_telegram_notification_task
 
 
 class BorrowingViewSet(viewsets.ModelViewSet):
@@ -36,7 +40,17 @@ class BorrowingViewSet(viewsets.ModelViewSet):
             raise serializers.ValidationError("Book is out of stock.")
         book.inventory -= 1
         book.save()
-        serializer.save(user=self.request.user)
+        borrowing = serializer.save(user=self.request.user)
+
+        # Telegram notification via Celery
+        message = (
+            f"📚 New borrowing!\n"
+            f"User: {self.request.user.email}\n"
+            f"Book: {book.title}\n"
+            f"Borrowed at: {borrowing.borrow_date}\n"
+            f"Return by: {borrowing.expected_return_date}"
+        )
+        send_telegram_notification_task.delay(message)
 
     @action(detail=True, methods=["post"], url_path="return")
     def return_borrowing(self, request, pk=None):
@@ -46,12 +60,9 @@ class BorrowingViewSet(viewsets.ModelViewSet):
                 {"detail": "Borrowing already returned."},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        borrowing.actual_return_date = request.data.get("actual_return_date") or None
-        if not borrowing.actual_return_date:
-            from datetime import date
-            borrowing.actual_return_date = date.today()
+        from datetime import date
+        borrowing.actual_return_date = date.today()
         borrowing.save()
-        # increment inventory
         book = borrowing.book
         book.inventory += 1
         book.save()
