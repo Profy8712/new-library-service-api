@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     "django_filters",
     "books",
     "users",
-
+    "borrowings",
 
 
 ]
