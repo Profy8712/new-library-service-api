@@ -1,18 +1,16 @@
-from rest_framework import viewsets, permissions
-from rest_framework.response import Response
-from rest_framework import status
+from django_filters.rest_framework import DjangoFilterBackend
 
-from . import serializers
+from books import permissions
+from .filters import BorrowingFilter
 from .models import Borrowing
-from .serializers import BorrowingReadSerializer, BorrowingCreateSerializer
+from .serializers import BorrowingCreateSerializer, BorrowingReadSerializer
 
 
 class BorrowingViewSet(viewsets.ModelViewSet):
-    """
-    Borrowing CRUD: read/list for all, create for users.
-    """
     queryset = Borrowing.objects.select_related("user", "book").all()
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = BorrowingFilter
 
     def get_serializer_class(self):
         if self.action == "create":
@@ -21,15 +19,10 @@ class BorrowingViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if user.is_staff:
-            return self.queryset
-        return self.queryset.filter(user=user)
-
-    def perform_create(self, serializer):
-        book = serializer.validated_data["book"]
-        # inventory validation (in addition to serializer)
-        if book.inventory < 1:
-            raise serializers.ValidationError("Book is out of stock.")
-        book.inventory -= 1
-        book.save()
-        serializer.save(user=self.request.user)
+        qs = self.queryset
+        user_id = self.request.query_params.get("user")
+        if not user.is_staff:
+            qs = qs.filter(user=user)
+        elif user_id:
+            qs = qs.filter(user_id=user_id)
+        return qs
