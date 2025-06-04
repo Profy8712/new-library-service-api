@@ -46,3 +46,14 @@ def test_book_daily_fee_validation():
         )
         book.full_clean()
 
+@pytest.mark.django_db
+def test_books_list_accessible_for_unauthenticated():
+    """Books list endpoint must be available for unauthenticated users."""
+    Book.objects.create(
+        title="Book1", author="A", cover="HARD", inventory=1, daily_fee=1.0
+    )
+    client = APIClient()
+    url = reverse("book-list")
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.data[0]["title"] == "Book1"
