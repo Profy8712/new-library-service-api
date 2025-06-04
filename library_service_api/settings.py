@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     "books",
     "users",
     "borrowings",
+    "notifications",
+    "django_celery_results",
+
 
 
 ]
@@ -160,3 +163,6 @@ SIMPLE_JWT = {
 
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
+
+CELERY_BROKER_URL = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = "django-db"
