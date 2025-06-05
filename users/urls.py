@@ -10,3 +10,5 @@ urlpatterns = [
     path("users/token/", TokenObtainPairView.as_view(), name="token-obtain"),
     path("users/token/refresh/", TokenRefreshView.as_view(), name="token-refresh"),
 ]
+
+

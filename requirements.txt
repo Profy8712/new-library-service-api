@@ -12,3 +12,5 @@ pytest
 pytest-django
 pytest-cov
 gunicorn
+drf-spectacular
+drf-spectacular-sidecar
