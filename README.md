@@ -144,7 +144,6 @@ To add new libraries: update requirements.txt and rebuild Docker.
 
 12. Security
 
-
 Never commit .env or secrets.
 
 For production: set DJANGO_DEBUG=False, configure proper ALLOWED_HOSTS.

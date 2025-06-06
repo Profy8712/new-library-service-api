@@ -14,3 +14,4 @@ pytest-cov
 gunicorn
 drf-spectacular
 drf-spectacular-sidecar
+redis
