@@ -1,0 +1,17 @@
+Django
+djangorestframework
+psycopg2-binary
+django-filter
+djangorestframework-simplejwt
+drf-yasg
+celery
+django-celery-results
+python-dotenv
+stripe
+pytest
+pytest-django
+pytest-cov
+gunicorn
+drf-spectacular
+drf-spectacular-sidecar
+redis
