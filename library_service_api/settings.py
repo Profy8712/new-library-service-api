@@ -158,14 +158,30 @@ AUTH_USER_MODEL = "users.User"
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
-SIMPLE_JWT = {
-    "AUTH_HEADER_TYPES": ("Authorize",),
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Library Service API",
+    "DESCRIPTION": "API for library book management, borrowings, payments, etc.",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_SETTINGS": {
+        "persistAuthorization": True,
+    },
+    "SECURITY": [{"Authorize": []}],
+    "COMPONENTS": {
+        "securitySchemes": {
+            "Authorize": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    },
 }
+
 
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
@@ -176,17 +192,5 @@ CELERY_RESULT_BACKEND = "django-db"
 STRIPE_API_KEY = os.environ.get("STRIPE_API_KEY")
 STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET")
 
-SPECTACULAR_SETTINGS = {
-    "TITLE": "Library Service API",
-    "DESCRIPTION": "API for library book management, borrowings, payments, etc.",
-    "VERSION": "1.0.0",
-    "SERVE_INCLUDE_SCHEMA": False,
-    "SWAGGER_UI_SETTINGS": {
-        "persistAuthorization": True,
-    },
-    "COMPONENT_SPLIT_REQUEST": True,
-    "SECURITY": [
-        {"BearerAuth": []}
-    ],
-    "AUTHENTICATION_WHITELIST": [],
-}
+
+
